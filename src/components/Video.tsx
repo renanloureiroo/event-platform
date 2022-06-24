@@ -8,14 +8,54 @@ import { DefaultUi, Player, Youtube } from "@vime/react";
 import { ButtonLink } from "./ButtonLink";
 
 import "@vime/core/themes/default.css";
+import { gql, useQuery } from "@apollo/client";
+import { StringValueNode } from "graphql";
 
-export const Video = () => {
+const GET_LESSON_BY_SLUG = gql`
+  query GetLessonBySlug($slug: String) {
+    lesson(where: { slug: $slug }) {
+      title
+      videoId
+      description
+      teacher {
+        avatarURL
+        bio
+        name
+      }
+    }
+  }
+`;
+
+type VideoProps = {
+  lessonSlug: string;
+};
+
+type GetLessonBySlugResponse = {
+  lesson: {
+    title: string;
+    videoId: string;
+    description: string;
+    teacher: {
+      avatarURL: string;
+      bio: string;
+      name: string;
+    };
+  };
+};
+
+export const Video = ({ lessonSlug }: VideoProps) => {
+  const { data } = useQuery<GetLessonBySlugResponse>(GET_LESSON_BY_SLUG, {
+    variables: {
+      slug: lessonSlug,
+    },
+  });
+
   return (
     <div className="flex-1">
       <div className="bg-black flex justify-center">
-        <div className="h-full w-full max-x-[1100px] max-h-[60vh] aspect-video">
+        <div className="h-full w-full max-w-[1100px] max-h-[60vh] aspect-video">
           <Player>
-            <Youtube videoId="RmcQ5NxB5Gs" />
+            <Youtube videoId={data?.lesson.videoId || ""} />
             <DefaultUi />
           </Player>
         </div>
@@ -24,31 +64,23 @@ export const Video = () => {
       <section className="p-8 max-w-[1100px] mx-auto">
         <div className="flex items-start gap-16">
           <div className="flex-1">
-            <h1 className="text-2xl font-bold">
-              Aula 01 - Abertura do Ignite Lab
-            </h1>
+            <h1 className="text-2xl font-bold">{data?.lesson.title}</h1>
 
-            <p className="mt-4 text-gray-200">
-              Nessa aula vamos dar início ao projeto criando a estrutura base da
-              aplicação utilizando ReactJS, Vite e TailwindCSS. Vamos também
-              realizar o setup do nosso projeto no GraphCMS criando as entidades
-              da aplicação e integrando a API GraphQL gerada pela plataforma no
-              nosso front-end utilizando Apollo Client.
-            </p>
+            <p className="mt-4 text-gray-200">{data?.lesson.description}</p>
 
             <div className="flex items-center gap-4 mt-6">
               <img
-                src="https://github.com/renanloureiroo.png"
+                src={data?.lesson.teacher.avatarURL}
                 alt="Avatar"
                 className="h-16 w-16 rounded-full border-2 border-blue-500"
               />
 
               <div className="leading-relaxed">
                 <strong className="font-bold text-2xl block">
-                  Renan Loureiro
+                  {data?.lesson.teacher.name}
                 </strong>
                 <span className="text-gray-200 text-sm block">
-                  Frontend Developer
+                  {data?.lesson.teacher.bio}
                 </span>
               </div>
             </div>
