@@ -1,6 +1,39 @@
+import { gql, useMutation } from "@apollo/client";
+import { CircleNotch } from "phosphor-react";
+import { useState, FormEvent } from "react";
+import { useNavigate, useRoutes } from "react-router-dom";
 import { Logo } from "../components/Logo";
 
+const CREATE_SUBSCRIBER_MUTATION = gql`
+  mutation CreateSubscriber($name: String!, $email: String!) {
+    createSubscriber(data: {name: $name, email: $email}) {
+      id
+    }
+  }
+`;
+
 export const Subscribe = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+
+  const [createSubscriber, {loading}] = useMutation(CREATE_SUBSCRIBER_MUTATION);
+  const navigate = useNavigate()
+  
+
+  const handleSubscribe = async (event: FormEvent) => {
+    event.preventDefault();
+    if(!!name && !!email){
+      await createSubscriber({
+        variables: {
+          name,
+          email,
+        },
+      });
+      
+      navigate('/event')
+    }
+  };
+
   return (
     <div className="min-h-screen bg-blur bg-no-repeat bg-cover flex flex-col items-center bg-react bg-no-repeat bg-top bg-react-logo">
       <div className="w-full max-w-[1100px] flex items-center justify-between mt-20 mx-auto">
@@ -22,23 +55,31 @@ export const Subscribe = () => {
           <strong className="block text-2xl mb-6">
             Inscreva-se gratuitamente
           </strong>
-          <form action="" className="flex flex-col gap-2 w-full">
+          <form
+            onSubmit={handleSubscribe}
+            className="flex flex-col gap-2 w-full"
+          >
             <input
+              value={name}
+              onChange={(event) => setName(event.target.value)}
               className="bg-gray-900 rounded px-5 h-14"
               type="text"
               placeholder="Seu nome completo"
             />
             <input
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
               className="bg-gray-900 rounded px-5 h-14"
               type="email"
               placeholder="Digite seu e-mail"
             />
 
             <button
-              className="uppercase font-bold p-4 w-full bg-green-500 rounded mt-4 hover:bg-green-700 transition-colors"
+              className="uppercase font-bold p-4 w-full bg-green-500 rounded mt-4 hover:bg-green-700 transition-colors flex items-center justify-center disabled:cursor-not-allowed disabled:opacity-50"
               type="submit"
+              disabled={loading}
             >
-              Garantir minha vaga
+             {loading ? <CircleNotch size={20}  className="animate-spin"/> : 'Garantir minha vaga'}
             </button>
           </form>
         </div>
