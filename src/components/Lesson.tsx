@@ -11,7 +11,6 @@ type Lesson = {
 
 type LessonProps = {
   data: Lesson;
- 
 };
 
 export const Lesson = ({ data }: LessonProps) => {
@@ -39,7 +38,7 @@ export const Lesson = ({ data }: LessonProps) => {
       >
         <header className="flex items-center justify-between">
           {isLessonAvailable ? (
-            <span className=" flex items-center gap-2 text-sm font-medium">
+            <span className=" flex items-center gap-2 text-sm font-medium text-white">
               <CheckCircle size={20} />
               Conteúdo liberado
             </span>
@@ -55,7 +54,7 @@ export const Lesson = ({ data }: LessonProps) => {
           </span>
         </header>
 
-        <strong className="text-gray-200 mt-5 block">{data.title}</strong>
+        <strong className="text-white mt-5 block">{data.title}</strong>
       </div>
     </Link>
     )
