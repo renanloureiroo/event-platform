@@ -23,10 +23,14 @@ export const Lesson = ({ data }: LessonProps) => {
     }
   );
   return (
-    <Link to={`/event/lesson/${data.slug}`} className="group">
+    <Link to={`/event/lesson/${data.slug}}`} className="group">
       <time className="text-gray-300">{formattedDate}</time>
 
-      <div className="rounded border border-gray-500 p-4 mt-2 group-hover:border-green-500 transition-colors">
+      <div
+        className={`rounded border border-gray-500 p-4 mt-2 group-hover:border-green-500 transition-colors ${
+          !isLessonAvailable && "cursor-not-allowed"
+        }`}
+      >
         <header className="flex items-center justify-between">
           {isLessonAvailable ? (
             <span className=" flex items-center gap-2 text-sm text-blue-500 font-medium">
