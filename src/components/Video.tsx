@@ -9,46 +9,26 @@ import { ButtonLink } from "./ButtonLink";
 
 import "@vime/core/themes/default.css";
 import { gql, useQuery } from "@apollo/client";
-import { StringValueNode } from "graphql";
-
-const GET_LESSON_BY_SLUG = gql`
-  query GetLessonBySlug($slug: String) {
-    lesson(where: { slug: $slug }) {
-      title
-      videoId
-      description
-      teacher {
-        avatarURL
-        bio
-        name
-      }
-    }
-  }
-`;
+import { useGetLessonBySlugQuery } from "../graphql/generated";
 
 type VideoProps = {
   lessonSlug: string;
 };
 
-type GetLessonBySlugResponse = {
-  lesson: {
-    title: string;
-    videoId: string;
-    description: string;
-    teacher: {
-      avatarURL: string;
-      bio: string;
-      name: string;
-    };
-  };
-};
-
 export const Video = ({ lessonSlug }: VideoProps) => {
-  const { data } = useQuery<GetLessonBySlugResponse>(GET_LESSON_BY_SLUG, {
+  const { data } = useGetLessonBySlugQuery({
     variables: {
       slug: lessonSlug,
     },
   });
+
+  if (!data?.lesson) {
+    return (
+      <>
+        <h1>Carregando...</h1>
+      </>
+    );
+  }
 
   return (
     <div className="flex-1">
@@ -70,17 +50,17 @@ export const Video = ({ lessonSlug }: VideoProps) => {
 
             <div className="flex items-center gap-4 mt-6">
               <img
-                src={data?.lesson.teacher.avatarURL}
+                src={data.lesson.teacher?.avatarURL}
                 alt="Avatar"
                 className="h-16 w-16 rounded-full border-2 border-blue-500"
               />
 
               <div className="leading-relaxed">
                 <strong className="font-bold text-2xl block">
-                  {data?.lesson.teacher.name}
+                  {data?.lesson.teacher?.name}
                 </strong>
                 <span className="text-gray-200 text-sm block">
-                  {data?.lesson.teacher.bio}
+                  {data?.lesson.teacher?.bio}
                 </span>
               </div>
             </div>
