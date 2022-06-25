@@ -1,5 +1,6 @@
 import {
   CaretRight,
+  CircleNotch,
   DiscordLogo,
   FileArrowDown,
   Lightning,
@@ -24,9 +25,9 @@ export const Video = ({ lessonSlug }: VideoProps) => {
 
   if (!data?.lesson) {
     return (
-      <>
-        <h1>Carregando...</h1>
-      </>
+      <div className=" flex flex-1 items-center justify-center">
+        <CircleNotch size={80} className="animate-spin" />
+      </div>
     );
   }
 
