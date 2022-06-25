@@ -3,34 +3,26 @@ import { CircleNotch } from "phosphor-react";
 import { useState, FormEvent } from "react";
 import { useNavigate, useRoutes } from "react-router-dom";
 import { Logo } from "../components/Logo";
-
-const CREATE_SUBSCRIBER_MUTATION = gql`
-  mutation CreateSubscriber($name: String!, $email: String!) {
-    createSubscriber(data: {name: $name, email: $email}) {
-      id
-    }
-  }
-`;
+import { useCreateSubscriberMutation } from "../graphql/generated";
 
 export const Subscribe = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
-  const [createSubscriber, {loading}] = useMutation(CREATE_SUBSCRIBER_MUTATION);
-  const navigate = useNavigate()
-  
+  const [createSubscriber, { loading }] = useCreateSubscriberMutation();
+  const navigate = useNavigate();
 
   const handleSubscribe = async (event: FormEvent) => {
     event.preventDefault();
-    if(!!name && !!email){
+    if (!!name && !!email) {
       await createSubscriber({
         variables: {
           name,
           email,
         },
       });
-      
-      navigate('/event')
+
+      navigate("/event");
     }
   };
 
@@ -79,7 +71,11 @@ export const Subscribe = () => {
               type="submit"
               disabled={loading}
             >
-             {loading ? <CircleNotch size={20}  className="animate-spin"/> : 'Garantir minha vaga'}
+              {loading ? (
+                <CircleNotch size={20} className="animate-spin" />
+              ) : (
+                "Garantir minha vaga"
+              )}
             </button>
           </form>
         </div>
